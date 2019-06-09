@@ -29,10 +29,12 @@ encoder = Sequential(
     ConvolutionalLayer(16, 32, padding=1, stride=2, normalization=InstanceNorm2d),
     ResidualBlockPreActivation(32, normalization=InstanceNorm2d),
     ConvolutionalLayer(32, 64, padding=1, stride=2, normalization=InstanceNorm2d),
-    ResidualBlockPreActivation(64, normalization=InstanceNorm2d)
+    ResidualBlockPreActivation(64, normalization=InstanceNorm2d),
+    ConvolutionalLayer(64, 128, padding=1, stride=2, normalization=InstanceNorm2d),
+    ResidualBlockPreActivation(128, normalization=InstanceNorm2d),
+    ConvolutionalLayer(128, 256, padding=1, stride=2, normalization=InstanceNorm2d),
 )
 model = DynamicUnet(encoder=encoder, n_classes=3, y_range=(0, 1))
-print(model(images.__getitem__(0).unsqueeze(0)))
 
 learner = StyleTransferLearner(
     dataloader, dataloader_val, style, content,
