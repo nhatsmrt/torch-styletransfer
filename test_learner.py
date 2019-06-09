@@ -8,17 +8,23 @@ from fastai.vision.models.unet import DynamicUnet
 from torch.utils.data import DataLoader
 from PIL import Image
 
+print(vgg16_bn().features)
+
 data_size = 1000
 n_channel = 3
 img_dim = (128, 128)
 h = 12
 w = 12
 
+
 images = UnlabelledImageDataset("data/", img_dim=img_dim)
-style = pil_to_tensor(Image.open("data/trump.jpg"))
-content = pil_to_tensor(Image.open("data/trump_2.jpeg").resize(img_dim))
-dataloader = DataLoader(images, shuffle=True, batch_size=1)
-dataloader_val = DataLoader(images, batch_size=len(images))
+train_size = int(0.8 * len(images))
+val_size = len(images) - train_size
+train_dataset, val_dataset = torch.utils.data.random_split(images, [train_size, val_size])
+
+style = pil_to_tensor(Image.open("la_muse.jpg"))
+dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
+dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
 
 feature_extractor = FeatureExtractor(fine_tune=False, device=get_device())
 
@@ -37,9 +43,9 @@ encoder = Sequential(
 model = DynamicUnet(encoder=encoder, n_classes=3, y_range=(0, 1))
 
 learner = StyleTransferLearner(
-    dataloader, dataloader_val, style, content,
+    dataloader, dataloader_val, style,
     model, feature_extractor,
-    feature_layers={1, 2}, style_layers={1, 2},
+    style_layers={5, 12, 22, 32, 42}, feature_layers={32},
     style_weight=1e8, content_weight=1.0, total_variation_weight=0.1, device=get_device(),
 )
-learner.learn(32, print_every=100, draw=True)
+learner.learn(100, print_every=100, draw=True)
