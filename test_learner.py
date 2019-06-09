@@ -45,7 +45,7 @@ model = DynamicUnet(encoder=encoder, n_classes=3, y_range=(0, 1))
 learner = StyleTransferLearner(
     dataloader, dataloader_val, style,
     model, feature_extractor,
-    style_layers={5, 12, 22, 32, 42}, feature_layers={32},
+    style_layers={5, 12, 22, 32, 42}, content_layers={32},
     style_weight=1e8, content_weight=1.0, total_variation_weight=0.1, device=get_device(),
 )
 learner.learn(100, print_every=100, draw=True)
