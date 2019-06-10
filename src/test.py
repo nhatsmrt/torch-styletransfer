@@ -11,7 +11,8 @@ from PIL import Image
 
 def run_test(
         style_weight=1e6, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=100, print_every=100, eval_every=1, save_path="weights/model.pt"
+        n_epoch=100, print_every=100, eval_every=1,
+        style_path="mouse.png", save_path="weights/model.pt"
 ):
     img_dim = (128, 128)
     mean = [0.485, 0.456, 0.406]
@@ -21,7 +22,7 @@ def run_test(
     val_size = len(images) - train_size
     train_dataset, val_dataset = torch.utils.data.random_split(images, [train_size, val_size])
 
-    style = pil_to_tensor(Image.open("la_muse.jpg"))
+    style = pil_to_tensor(Image.open(style_path))
     dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
     dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
 
