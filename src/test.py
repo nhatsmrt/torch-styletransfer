@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def run_test(
-        style_weight=1e6, content_weight=1.0, total_variation_weight=0.1,
+        style_weight=1e2, content_weight=1.0, total_variation_weight=0.1,
         n_epoch=100, print_every=100, eval_every=1,
         style_path="mouse.png", save_path="weights/model.pt"
 ):
