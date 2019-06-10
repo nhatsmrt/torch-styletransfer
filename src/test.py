@@ -11,7 +11,7 @@ from PIL import Image
 
 def run_test(
         style_weight=1e6, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=100, print_every=100, eval_every=1
+        n_epoch=100, print_every=100, eval_every=1, save_path="weights/model.pt"
 ):
     img_dim = (128, 128)
     mean = [0.485, 0.456, 0.406]
@@ -50,4 +50,4 @@ def run_test(
         style_weight=style_weight, content_weight=content_weight,
         total_variation_weight=total_variation_weight, device=get_device()
     )
-    learner.learn(n_epoch=n_epoch, print_every=print_every, eval_every=eval_every, draw=True)
+    learner.learn(n_epoch=n_epoch, print_every=print_every, eval_every=eval_every, draw=True, save_path=save_path)
