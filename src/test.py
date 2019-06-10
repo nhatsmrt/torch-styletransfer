@@ -22,7 +22,7 @@ def run_test(
     val_size = len(images) - train_size
     train_dataset, val_dataset = torch.utils.data.random_split(images, [train_size, val_size])
 
-    style = pil_to_tensor(Image.open(style_path).convert("rgb"))
+    style = pil_to_tensor(Image.open(style_path).convert("RGB"))
     dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
     dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
 
