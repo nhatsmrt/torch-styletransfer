@@ -13,6 +13,7 @@ from .unet import CustomDynamicUnet
 def run_test(
         encoder=None, style_weight=1e2, content_weight=1.0, total_variation_weight=0.1,
         n_epoch=100, print_every=100, eval_every=1, batch_size=4,
+        style_layers={5, 12, 22, 32, 42}, content_layers={32},
         style_path="mouse.png", save_path="weights/model.pt"
 ):
     img_dim = (128, 128)
@@ -50,7 +51,7 @@ def run_test(
     learner = StyleTransferLearner(
         dataloader, dataloader_val, style,
         model, feature_extractor,
-        style_layers={5, 12, 22, 32, 42}, content_layers={32},
+        style_layers=style_layers, content_layers=content_layers,
         style_weight=style_weight, content_weight=content_weight,
         total_variation_weight=total_variation_weight, device=get_device()
     )
