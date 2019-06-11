@@ -7,10 +7,11 @@ from torch.nn import Sequential, InstanceNorm2d
 from fastai.vision.models.unet import DynamicUnet
 from torch.utils.data import DataLoader
 from PIL import Image
+from .unet import CustomDynamicUnet
 
 
 def run_test(
-        style_weight=1e2, content_weight=1.0, total_variation_weight=0.1,
+        encoder=None, style_weight=1e2, content_weight=1.0, total_variation_weight=0.1,
         n_epoch=100, print_every=100, eval_every=1,
         style_path="mouse.png", save_path="weights/model.pt"
 ):
@@ -31,18 +32,20 @@ def run_test(
         mean=mean, std=std,
         device=get_device()
     )
-    encoder = Sequential(
-        ConvolutionalLayer(3, 16, padding=1, stride=2, normalization=InstanceNorm2d),
-        ResidualBlockPreActivation(16, normalization=InstanceNorm2d),
-        ConvolutionalLayer(16, 32, padding=1, stride=2, normalization=InstanceNorm2d),
-        ResidualBlockPreActivation(32, normalization=InstanceNorm2d),
-        ConvolutionalLayer(32, 64, padding=1, stride=2, normalization=InstanceNorm2d),
-        ResidualBlockPreActivation(64, normalization=InstanceNorm2d),
-        ConvolutionalLayer(64, 128, padding=1, stride=2, normalization=InstanceNorm2d),
-        ResidualBlockPreActivation(128, normalization=InstanceNorm2d),
-        ConvolutionalLayer(128, 256, padding=1, stride=2, normalization=InstanceNorm2d),
-    )
-    model = DynamicUnet(encoder=encoder, n_classes=3, y_range=(0, 1))
+    if encoder is None:
+        encoder = Sequential(
+            ConvolutionalLayer(3, 16, padding=1, stride=2, normalization=InstanceNorm2d),
+            SEResidualBlockPreActivation(16, normalization=InstanceNorm2d),
+            ConvolutionalLayer(16, 32, padding=1, stride=2, normalization=InstanceNorm2d),
+            SEResidualBlockPreActivation(32, normalization=InstanceNorm2d),
+            ConvolutionalLayer(32, 64, padding=1, stride=2, normalization=InstanceNorm2d),
+            SEResidualBlockPreActivation(64, normalization=InstanceNorm2d),
+            ConvolutionalLayer(64, 128, padding=1, stride=2, normalization=InstanceNorm2d),
+            SEResidualBlockPreActivation(128, normalization=InstanceNorm2d),
+            ConvolutionalLayer(128, 256, padding=1, stride=2, normalization=InstanceNorm2d),
+        )
+    model = CustomDynamicUnet(encoder=encoder, normalization=InstanceNorm2d, n_classes=3, y_range=(0, 1))
+    print(model)
 
     learner = StyleTransferLearner(
         dataloader, dataloader_val, style,
