@@ -12,7 +12,7 @@ from .unet import CustomDynamicUnet
 
 def run_test(
         encoder=None, style_weight=1e2, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=100, print_every=100, eval_every=1,
+        n_epoch=100, print_every=100, eval_every=1, batch_size=4,
         style_path="mouse.png", save_path="weights/model.pt"
 ):
     img_dim = (128, 128)
@@ -24,8 +24,8 @@ def run_test(
     train_dataset, val_dataset = torch.utils.data.random_split(images, [train_size, val_size])
 
     style = pil_to_tensor(Image.open(style_path).convert("RGB"))
-    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
-    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
+    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size)
+    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=batch_size)
 
     feature_extractor = FeatureExtractor(
         model=vgg16_bn, fine_tune=False,
