@@ -44,7 +44,7 @@ def run_test(
             SEResidualBlockPreActivation(128, normalization=InstanceNorm2d),
             ConvolutionalLayer(128, 256, padding=1, stride=2, normalization=InstanceNorm2d),
         )
-    model = CustomDynamicUnet(encoder=encoder, normalization=InstanceNorm2d, n_classes=3, y_range=(0, 1))
+    model = CustomDynamicUnet(encoder=encoder, normalization=InstanceNorm2d, n_classes=3, y_range=(0, 1), blur=True)
     print(model)
 
     learner = StyleTransferLearner(
