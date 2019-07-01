@@ -58,7 +58,7 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1.0, content_weight=1.0, n_epoch=100, print_every=1, style_path="data/train_9"
+        style_weight=1.0, content_weight=1.0, n_epoch=100, print_every=1, style_path="data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset
