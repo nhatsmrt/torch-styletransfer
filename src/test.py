@@ -72,9 +72,8 @@ def run_test_multiple(
     img_dim = (128, 128)
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
-    content_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
 
-    # content_images = UnlabelledImageDataset("data/", img_dim=img_dim)
+    content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
     style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
     dataset = PairedDataset(content_images, style_images)
 
