@@ -55,3 +55,57 @@ def run_test(
         total_variation_weight=total_variation_weight, device=get_device()
     )
     learner.learn(n_epoch=n_epoch, print_every=print_every, eval_every=eval_every, draw=True, save_path=save_path)
+
+
+def run_test_multiple(
+        style_weight=1.0, content_weight=1.0, n_epoch=100, print_every=1, style_path="data/train_9"
+):
+    from nntoolbox.vision.learner import MultipleStylesTransferLearner
+    from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset
+    from nntoolbox.utils import get_device
+    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint
+    from src.models import GenericDecoder, MultipleStyleTransferNetwork
+    from torchvision.models import vgg19
+    from torch.utils.data import DataLoader
+    from torch.optim import Adam
+
+    img_dim = (128, 128)
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
+    content_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+
+    # content_images = UnlabelledImageDataset("data/", img_dim=img_dim)
+    style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+    dataset = PairedDataset(content_images, style_images)
+
+    train_size = int(0.8 * len(dataset))
+    val_size = len(dataset) - train_size
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+
+    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
+    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
+
+    feature_extractor = FeatureExtractor(
+        model=vgg19, fine_tune=False,
+        mean=mean, std=std,
+        device=get_device()
+    )
+    decoder = GenericDecoder()
+    model = MultipleStyleTransferNetwork(
+        encoder=FeatureExtractor(vgg19(pretrained=True)),
+        decoder=decoder,
+        extracted_feature=20
+    )
+    optimizer = Adam(model.parameters())
+    learner = MultipleStylesTransferLearner(
+        dataloader, dataloader_val,
+        model, feature_extractor, optimizer=optimizer,
+        style_layers={1, 6, 11, 20, 42},
+        style_weight=style_weight, content_weight=content_weight, device=get_device()
+    )
+    callbacks = [
+        Tensorboard(),
+        MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
+        ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt')
+    ]
+    learner.learn(n_epoch=n_epoch, callbacks=callbacks)
