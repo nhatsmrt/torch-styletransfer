@@ -81,8 +81,8 @@ def run_test_multiple(
     val_size = len(dataset) - train_size
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
 
-    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=16)
-    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=16)
+    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=8)
+    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=8)
 
     feature_extractor = FeatureExtractor(
         model=vgg19, fine_tune=False,
