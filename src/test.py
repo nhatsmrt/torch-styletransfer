@@ -105,7 +105,7 @@ def run_test_multiple(
     decoder = GenericDecoder()
     print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
-        encoder=FeatureExtractor(feature_extractor),
+        encoder=feature_extractor,
         decoder=decoder,
         extracted_feature=20
     )
