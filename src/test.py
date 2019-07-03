@@ -74,7 +74,8 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
+    style_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
+    # style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
     dataset = PairedDataset(content_images, style_images)
 
     train_size = int(0.8 * len(dataset))
