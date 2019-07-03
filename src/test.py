@@ -93,7 +93,7 @@ def run_test_multiple(
     val_dataset = PairedDataset(val_content, val_style)
 
     # train_sampler = BatchSampler(RandomSampler(train_dataset), batch_size=8, drop_last=True)
-    n_batch = compute_num_batch(len(train_dataset), 8)
+    # n_batch = compute_num_batch(len(train_dataset), 8)
     # print(n_batch)
     train_sampler = RandomSampler(train_dataset, replacement=True, num_samples=8)
     val_sampler = RandomSampler(val_dataset, replacement=True, num_samples=8)
@@ -130,4 +130,4 @@ def run_test_multiple(
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
     ]
-    learner.learn(n_epoch=n_epoch, callbacks=callbacks)
+    learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
