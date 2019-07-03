@@ -1,7 +1,7 @@
 from nntoolbox.vision.learner import StyleTransferLearner
 from nntoolbox.vision.components import *
 from nntoolbox.vision.utils import UnlabelledImageDataset, UnlabelledImageListDataset, pil_to_tensor
-from nntoolbox.utils import get_device
+from nntoolbox.utils import get_device, compute_num_batch
 from torchvision.models import vgg16_bn, vgg19_bn
 from torch.nn import Sequential, InstanceNorm2d
 from fastai.vision.models.unet import DynamicUnet
@@ -58,7 +58,7 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1.0, content_weight=1.0, n_epoch=100, print_every=1, style_path="./data/train_9/"
+        style_weight=1.0, content_weight=1.0, n_epoch=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
@@ -92,8 +92,11 @@ def run_test_multiple(
     train_dataset = PairedDataset(train_content, train_style)
     val_dataset = PairedDataset(val_content, val_style)
 
-    train_sampler = RandomSampler(train_dataset, replacement=True)
-    val_sampler = RandomSampler(val_dataset, replacement=True)
+    # train_sampler = BatchSampler(RandomSampler(train_dataset), batch_size=8, drop_last=True)
+    n_batch = compute_num_batch(len(train_dataset), 8)
+    # print(n_batch)
+    train_sampler = RandomSampler(train_dataset, replacement=True, num_samples=8)
+    val_sampler = RandomSampler(val_dataset, replacement=True, num_samples=8)
 
 
     print("Begin creating data dataloaders")
@@ -122,7 +125,7 @@ def run_test_multiple(
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
-        Tensorboard(),
+        Tensorboard(every_iter=1000, every_epoch=1000),
         MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
