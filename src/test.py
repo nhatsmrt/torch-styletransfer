@@ -92,8 +92,8 @@ def run_test_multiple(
 
 
     print("Begin creating data dataloaders")
-    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=8)
-    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=8)
+    dataloader = DataLoader(train_dataset, shuffle=True, batch_size=1)
+    dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=1)
 
     print("Creating models")
     feature_extractor = FeatureExtractor(
