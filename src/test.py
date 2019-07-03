@@ -74,8 +74,8 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
-    content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
+    content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
+    style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
 
     # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
@@ -93,13 +93,14 @@ def run_test_multiple(
     val_dataset = PairedDataset(val_content, val_style)
 
     # train_sampler = BatchSampler(RandomSampler(train_dataset), batch_size=8, drop_last=True)
-    train_sampler = MultiRandomSampler(train_dataset, batch_size=8, replacement=True)
+    train_sampler = RandomSampler(train_dataset, replacement=True, num_samples=8)
     val_sampler = RandomSampler(val_dataset, replacement=True, num_samples=8)
 
 
     print("Begin creating data dataloaders")
     dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=8)
     dataloader_val = DataLoader(val_dataset, sampler=val_sampler, batch_size=8)
+    # print(len(dataloader))
 
     print("Creating models")
     feature_extractor = FeatureExtractor(
@@ -123,9 +124,9 @@ def run_test_multiple(
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
-        Tensorboard(every_iter=1000),
+        Tensorboard(every_iter=1000, every_epoch=1),
         MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
     ]
-    learner.learn(n_epoch=n_epoch, callbacks=callbacks)
+    learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
