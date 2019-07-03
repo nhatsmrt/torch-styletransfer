@@ -1,7 +1,7 @@
 from nntoolbox.vision.learner import StyleTransferLearner
 from nntoolbox.vision.components import *
 from nntoolbox.vision.utils import UnlabelledImageDataset, UnlabelledImageListDataset, pil_to_tensor
-from nntoolbox.utils import get_device, compute_num_batch
+from nntoolbox.utils import get_device, compute_num_batch, MultiRandomSampler
 from torchvision.models import vgg16_bn, vgg19_bn
 from torch.nn import Sequential, InstanceNorm2d
 from fastai.vision.models.unet import DynamicUnet
@@ -74,11 +74,11 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
-    content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
+    # content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
+    # style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
 
-    # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
-    # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
+    content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
+    style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
     print("Begin splitting data")
     train_size = int(0.8 * len(content_images))
@@ -93,9 +93,7 @@ def run_test_multiple(
     val_dataset = PairedDataset(val_content, val_style)
 
     # train_sampler = BatchSampler(RandomSampler(train_dataset), batch_size=8, drop_last=True)
-    # n_batch = compute_num_batch(len(train_dataset), 8)
-    # print(n_batch)
-    train_sampler = RandomSampler(train_dataset, replacement=True, num_samples=8)
+    train_sampler = MultiRandomSampler(train_dataset, batch_size=8, replacement=True)
     val_sampler = RandomSampler(val_dataset, replacement=True, num_samples=8)
 
 
@@ -125,9 +123,9 @@ def run_test_multiple(
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
-        Tensorboard(every_iter=1000, every_epoch=1),
+        Tensorboard(every_iter=1000),
         MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
     ]
-    learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
+    learner.learn(n_epoch=n_epoch, callbacks=callbacks)
