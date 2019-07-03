@@ -1,6 +1,6 @@
 from nntoolbox.vision.learner import StyleTransferLearner
 from nntoolbox.vision.components import *
-from nntoolbox.vision.utils import UnlabelledImageDataset, pil_to_tensor
+from nntoolbox.vision.utils import UnlabelledImageDataset, UnlabelledImageListDataset, pil_to_tensor
 from nntoolbox.utils import get_device
 from torchvision.models import vgg16_bn, vgg19_bn
 from torch.nn import Sequential, InstanceNorm2d
@@ -61,9 +61,9 @@ def run_test_multiple(
         style_weight=1.0, content_weight=1.0, n_epoch=100, print_every=1, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
-    from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset
+    from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
-    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint
+    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint, ToDeviceCallback
     from src.models import GenericDecoder, MultipleStyleTransferNetwork
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
@@ -73,8 +73,8 @@ def run_test_multiple(
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
 
-    content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+    content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
+    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
     dataset = PairedDataset(content_images, style_images)
 
     train_size = int(0.8 * len(dataset))
@@ -105,6 +105,7 @@ def run_test_multiple(
     callbacks = [
         Tensorboard(),
         MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
-        ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt')
+        ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
+        ToDeviceCallback()
     ]
     learner.learn(n_epoch=n_epoch, callbacks=callbacks)
