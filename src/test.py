@@ -5,7 +5,7 @@ from nntoolbox.utils import get_device
 from torchvision.models import vgg16_bn, vgg19_bn
 from torch.nn import Sequential, InstanceNorm2d
 from fastai.vision.models.unet import DynamicUnet
-from torch.utils.data import DataLoader, RandomSampler
+from torch.utils.data import DataLoader, RandomSampler, BatchSampler
 from PIL import Image
 from .unet import CustomDynamicUnet
 
@@ -74,11 +74,11 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
-    content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
+    # content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
+    # style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
 
-    # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
-    # style_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
+    content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
+    style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
     print("Begin splitting data")
     train_size = int(0.8 * len(content_images))
@@ -86,19 +86,19 @@ def run_test_multiple(
     train_content, val_content = torch.utils.data.random_split(content_images, [train_size, val_size])
 
     train_size = int(0.8 * len(style_images))
-    val_size = len(content_images) - train_size
-    train_style, val_style = torch.utils.data.random_split(content_images, [train_size, val_size])
+    val_size = len(style_images) - train_size
+    train_style, val_style = torch.utils.data.random_split(style_images, [train_size, val_size])
 
     train_dataset = PairedDataset(train_content, train_style)
     val_dataset = PairedDataset(val_content, val_style)
 
-    train_sampler = RandomSampler(train_dataset, replacement=True, num_samples=8)
-    val_sampler = RandomSampler(val_dataset, replacement=True, num_samples=8)
+    train_sampler = RandomSampler(train_dataset, replacement=True)
+    val_sampler = RandomSampler(val_dataset, replacement=True)
 
 
     print("Begin creating data dataloaders")
-    dataloader = DataLoader(train_dataset, sampler=train_sampler)
-    dataloader_val = DataLoader(val_dataset, sampler=val_sampler)
+    dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=8)
+    dataloader_val = DataLoader(val_dataset, sampler=val_sampler, batch_size=8)
 
     print("Creating models")
     feature_extractor = FeatureExtractor(
