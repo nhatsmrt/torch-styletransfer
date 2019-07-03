@@ -125,7 +125,7 @@ def run_test_multiple(
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
-        Tensorboard(every_iter=1000, every_epoch=1000),
+        Tensorboard(every_iter=1000, every_epoch=1),
         MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
