@@ -77,12 +77,19 @@ def run_test_multiple(
     content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
     style_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
     # style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
-    dataset = PairedDataset(content_images, style_images)
 
     print("Begin splitting data")
-    train_size = int(0.8 * len(dataset))
-    val_size = len(dataset) - train_size
-    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+    train_size = int(0.8 * len(content_images))
+    val_size = len(content_images) - train_size
+    train_content, val_content = torch.utils.data.random_split(content_images, [train_size, val_size])
+
+    train_size = int(0.8 * len(style_images))
+    val_size = len(content_images) - train_size
+    train_style, val_style = torch.utils.data.random_split(content_images, [train_size, val_size])
+
+    train_dataset = PairedDataset(train_content, train_style)
+    val_dataset = PairedDataset(val_content, val_style)
+
 
     print("Begin creating data dataloaders")
     dataloader = DataLoader(train_dataset, shuffle=True, batch_size=8)
