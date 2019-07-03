@@ -85,13 +85,15 @@ def run_test_multiple(
     dataloader = DataLoader(train_dataset, shuffle=True, batch_size=8)
     dataloader_val = DataLoader(val_dataset, shuffle=True, batch_size=8)
 
-    pretrained_model = vgg19(True)
+    print("Creating models")
     feature_extractor = FeatureExtractor(
-        model=pretrained_model, fine_tune=False,
+        model=vgg19(True), fine_tune=False,
         mean=mean, std=std,
         device=get_device()
     )
+    print("Finish creating feature extractor")
     decoder = GenericDecoder()
+    print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
         encoder=FeatureExtractor(feature_extractor),
         decoder=decoder,
