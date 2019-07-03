@@ -2,6 +2,9 @@ from .unet import *
 from nntoolbox.vision import *
 
 
+__all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder']
+
+
 class MultipleStyleTransferNetwork(nn.Module):
     def __init__(self, encoder: FeatureExtractor, decoder:nn.Module, extracted_feature: int):
         super(MultipleStyleTransferNetwork, self).__init__()
@@ -10,19 +13,19 @@ class MultipleStyleTransferNetwork(nn.Module):
         self.decoder = decoder
         self._extracted_feature = extracted_feature
 
-    def forward(self, input):
+    def forward(self, input: Tensor) -> Tensor:
         return self.decoder(self.style_encode(input))
 
-    def style_encode(self, input):
-        return self.adain(self.encode(input))
+    def style_encode(self, input: Tensor) -> Tensor:
+        return self.adain(self.encode(input)) # t = AdaIn(f(c), f(s))
 
-    def encode(self, input):
+    def encode(self, input: Tensor) -> Tensor:
         return self.encoder(input, layers=[self._extracted_feature])
 
-    def decode(self, input):
+    def decode(self, input: Tensor) -> Tensor:
         return self.decoder(input)
 
-    def set_style(self, style_img):
+    def set_style(self, style_img: Tensor):
         '''
         :param style_img:
         :return:

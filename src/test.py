@@ -58,7 +58,8 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1.0, content_weight=1.0, n_epoch=80000, print_every=1000, style_path="./data/train_9/"
+        style_weight=1e-2, content_weight=1.0, total_variation_weight=1e-3,
+        n_epoch=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
@@ -120,12 +121,14 @@ def run_test_multiple(
     learner = MultipleStylesTransferLearner(
         dataloader, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
-        style_layers={1, 6, 11, 20, 42},
+        style_layers={1, 6, 11, 20, 42}, total_variation_weight=total_variation_weight,
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
         Tensorboard(every_iter=1000, every_epoch=1),
-        MultipleMetricLogger(iter_metrics=["content_loss", "style_loss", "loss"], print_every=print_every),
+        MultipleMetricLogger(
+            iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
+        ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         ToDeviceCallback()
     ]
