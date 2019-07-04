@@ -30,7 +30,7 @@ class MultipleStyleTransferNetwork(nn.Module):
         :param style_img:
         :return:
         '''
-        self.adain.set_style(self.encoder(style_img))
+        self.adain.set_style(self.encode(style_img))
 
 
 class GenericDecoder(nn.Module):
