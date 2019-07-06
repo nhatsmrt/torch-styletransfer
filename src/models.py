@@ -1,4 +1,3 @@
-from .unet import *
 from nntoolbox.vision import *
 
 
@@ -78,7 +77,8 @@ class PixelShuffleDecoder(nn.Module):
             in_channels=32, out_channels=8, activation=nn.Identity,
             normalization=nn.Identity, upscale_factor=2
         )
-        self.conv = nn.Conv2d(in_channels=8, out_channels=3, kernel_size=1)
+        self.pad = nn.ReplicationPad2d(1)
+        self.conv = nn.Conv2d(in_channels=8, out_channels=3, kernel_size=3, padding=0)
         self.op = nn.Sigmoid()
 
 
@@ -88,6 +88,7 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample2(upsampled)
         upsampled = self.mid2(upsampled)
         upsampled = self.upsample3(upsampled)
+        upsampled = self.pad(upsampled)
         upsampled = self.conv(upsampled)
         op = self.op(upsampled)
         return op

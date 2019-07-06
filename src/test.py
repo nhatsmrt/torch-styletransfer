@@ -75,11 +75,11 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
-    content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+    # content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
+    # style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
 
-    # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
-    # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
+    content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
+    style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
     print("Begin splitting data")
     train_size = int(0.8 * len(content_images))
