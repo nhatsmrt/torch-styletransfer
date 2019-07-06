@@ -75,13 +75,8 @@ class PixelShuffleDecoder(nn.Module):
         )
         self.mid2 = ResidualBlockPreActivation(in_channels=32, normalization=nn.Identity)
         self.upsample3 = PixelShuffleConvolutionLayer(
-            in_channels=32, out_channels=8,
+            in_channels=32, out_channels=3, activation=nn.Identity,
             normalization=nn.Identity, upscale_factor=2
-        )
-        self.mid3 = ResidualBlockPreActivation(in_channels=8, normalization=nn.Identity)
-        self.upsample4 = PixelShuffleConvolutionLayer(
-            in_channels=8, out_channels=3, normalization=nn.Identity,
-            activation=nn.Identity, upscale_factor=2
         )
         self.op = nn.Sigmoid()
 
@@ -92,7 +87,5 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample2(upsampled)
         upsampled = self.mid2(upsampled)
         upsampled = self.upsample3(upsampled)
-        upsampled = self.mid3(upsampled)
-        upsampled = self.upsample4(upsampled)
         op = self.op(upsampled)
         return op
