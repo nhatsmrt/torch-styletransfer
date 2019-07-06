@@ -59,3 +59,40 @@ class GenericDecoder(nn.Module):
         upsampled = self.upsample4(upsampled, out_h=out_h, out_w=out_w)
         op = self.op(upsampled)
         return op
+
+
+class PixelShuffleDecoder(nn.Module):
+    def __init__(self):
+        super(PixelShuffleDecoder, self).__init__()
+        self.upsample1 = PixelShuffleConvolutionLayer(
+            in_channels=512, out_channels=128,
+            normalization=nn.Identity, upscale_factor=2
+        )
+        self.mid1 = ResidualBlockPreActivation(in_channels=128, normalization=nn.Identity)
+        self.upsample2 = PixelShuffleConvolutionLayer(
+            in_channels=128, out_channels=32,
+            normalization=nn.Identity, upscale_factor=2
+        )
+        self.mid2 = ResidualBlockPreActivation(in_channels=32, normalization=nn.Identity)
+        self.upsample3 = PixelShuffleConvolutionLayer(
+            in_channels=32, out_channels=8,
+            normalization=nn.Identity, upscale_factor=2
+        )
+        self.mid3 = ResidualBlockPreActivation(in_channels=8, normalization=nn.Identity)
+        self.upsample4 = PixelShuffleConvolutionLayer(
+            in_channels=8, out_channels=3, normalization=nn.Identity,
+            activation=nn.Identity, upscale_factor=2
+        )
+        self.op = nn.Sigmoid()
+
+
+    def forward(self, input):
+        upsampled = self.upsample1(input)
+        upsampled = self.mid1(upsampled)
+        upsampled = self.upsample2(upsampled)
+        upsampled = self.mid2(upsampled)
+        upsampled = self.upsample3(upsampled)
+        upsampled = self.mid3(upsampled)
+        upsampled = self.upsample4(upsampled)
+        op = self.op(upsampled)
+        return op

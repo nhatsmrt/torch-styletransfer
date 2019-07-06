@@ -2,7 +2,7 @@ from nntoolbox.vision.learner import StyleTransferLearner
 from nntoolbox.vision.components import *
 from nntoolbox.vision.utils import UnlabelledImageDataset, UnlabelledImageListDataset, pil_to_tensor
 from nntoolbox.utils import get_device, compute_num_batch, MultiRandomSampler
-from torchvision.models import vgg16_bn, vgg19_bn
+from torchvision.models import vgg16_bn, vgg19_bn, vgg19
 from torch.nn import Sequential, InstanceNorm2d
 from fastai.vision.models.unet import DynamicUnet
 from torch.utils.data import DataLoader, RandomSampler, BatchSampler
