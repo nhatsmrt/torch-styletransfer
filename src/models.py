@@ -43,10 +43,9 @@ class GenericDecoder(nn.Module):
         self.upsample3 = ResizeConvolutionalLayer(in_channels=32, out_channels=8, normalization=nn.Identity)
         self.mid3 = ResidualBlockPreActivation(in_channels=8, normalization=nn.Identity)
         self.upsample4 = ResizeConvolutionalLayer(
-            in_channels=8, out_channels=8,
-            normalization=nn.Identity, activation=nn.ReLU
+            in_channels=8, out_channels=3,
+            normalization=nn.Identity, activation=nn.Identity
         )
-        self.conv = nn.Conv2d(8, 3, kernel_size=3, padding=1)
         self.op = nn.Sigmoid()
 
     def forward(self, input, out_h: int=128, out_w: int=128):
@@ -58,7 +57,6 @@ class GenericDecoder(nn.Module):
         upsampled = self.upsample3(upsampled, out_h=out_h // 2, out_w=out_w // 2)
         upsampled = self.mid3(upsampled)
         upsampled = self.upsample4(upsampled, out_h=out_h, out_w=out_w)
-        upsampled = self.conv(upsampled)
         op = self.op(upsampled)
         return op
 
@@ -77,9 +75,10 @@ class PixelShuffleDecoder(nn.Module):
         )
         self.mid2 = ResidualBlockPreActivation(in_channels=32, normalization=nn.Identity)
         self.upsample3 = PixelShuffleConvolutionLayer(
-            in_channels=32, out_channels=3, activation=nn.Identity,
+            in_channels=32, out_channels=8, activation=nn.Identity,
             normalization=nn.Identity, upscale_factor=2
         )
+        self.conv = nn.Conv2d(in_channels=8, out_channels=3, kernel_size=1)
         self.op = nn.Sigmoid()
 
 
@@ -89,5 +88,6 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample2(upsampled)
         upsampled = self.mid2(upsampled)
         upsampled = self.upsample3(upsampled)
+        upsampled = self.conv(upsampled)
         op = self.op(upsampled)
         return op
