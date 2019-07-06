@@ -65,7 +65,7 @@ def run_test_multiple(
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint, ToDeviceCallback
-    from src.models import GenericDecoder, MultipleStyleTransferNetwork
+    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
     from torch.optim import Adam
@@ -110,7 +110,8 @@ def run_test_multiple(
         device=get_device()
     )
     print("Finish creating feature extractor")
-    decoder = GenericDecoder()
+    # decoder = GenericDecoder()
+    decoder = PixelShuffleDecoder()
     print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
         encoder=feature_extractor,
