@@ -5,6 +5,7 @@ Much of the code iThe training procedure can be found in [here](https://github.c
 ## Issues
 The biggest issue I still have to deal with is checkerboard artifacts (see results section)
 ## Some results
-![Content](demo/content.png)
-![Style](demo/style.png)
-![Styloed](demo/styled.png)
+<img src="demo/content.png" alt="content" width="250" />
+<img src="demo/style.png" alt="style" width="250" />
+<img src="demo/styled.png" alt="styled" width="250" />
+<!-- ![Styled](demo/styled.png) -->
