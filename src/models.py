@@ -1,4 +1,5 @@
 from nntoolbox.vision import *
+from .layers import *
 
 
 __all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder']
@@ -67,12 +68,12 @@ class PixelShuffleDecoder(nn.Module):
             in_channels=512, out_channels=128,
             normalization=nn.Identity, upscale_factor=2
         )
-        self.mid1 = ResidualBlockPreActivation(in_channels=128, normalization=nn.Identity)
+        self.mid1 = CustomResidualBlockPreActivation(in_channels=128, normalization=nn.Identity)
         self.upsample2 = PixelShuffleConvolutionLayer(
             in_channels=128, out_channels=32,
             normalization=nn.Identity, upscale_factor=2
         )
-        self.mid2 = ResidualBlockPreActivation(in_channels=32, normalization=nn.Identity)
+        self.mid2 = CustomResidualBlockPreActivation(in_channels=32, normalization=nn.Identity)
         self.upsample3 = PixelShuffleConvolutionLayer(
             in_channels=32, out_channels=3, activation=nn.Identity,
             normalization=nn.Identity, upscale_factor=2

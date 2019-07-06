@@ -1,10 +1,11 @@
 from fastai.torch_core import *
+from nntoolbox.vision import ResNeXtBlock, ConvolutionalLayer
 
 __all__ = ['AdaptiveConcatPool2d',
            'Flatten', 'Lambda', 'PoolFlatten', 'View', 'ResizeBatch', 'bn_drop_lin', 'conv2d', 'conv2d_trans',
            'custom_conv_layer', 'NormType', 'relu', 'batchnorm_2d', 'CustomPixelShuffle_ICNR', 'icnr',
            'SelfAttention', 'SequentialEx', 'MergeLayer', 'custom_res_block', 'sigmoid_range',
-           'SigmoidRange', 'PartialLayer']
+           'SigmoidRange', 'PartialLayer', 'CustomResidualBlockPreActivation']
 
 
 class Lambda(nn.Module):
@@ -290,3 +291,26 @@ class CustomPixelShuffle_ICNR(nn.Module):
     def forward(self, x):
         x = self.shuf(self.relu(self.conv(x)))
         return self.blur(self.pad(x)) if self.blur else x
+
+
+class CustomResidualBlockPreActivation(ResNeXtBlock):
+    def __init__(self, in_channels, activation=nn.ReLU, normalization=nn.BatchNorm2d):
+        super(CustomResidualBlockPreActivation, self).__init__(
+            branches=nn.ModuleList(
+                [
+                    nn.Sequential(
+                        nn.ReplicationPad2d(1),
+                        ConvolutionalLayer(
+                            in_channels, in_channels, 3, padding=0,
+                            activation=activation, normalization=normalization
+                        ),
+                        nn.ReplicationPad2d(1),
+                        ConvolutionalLayer(
+                            in_channels, in_channels, 3, padding=0,
+                            activation=activation, normalization=normalization
+                        )
+                    )
+                ]
+            ),
+            use_shake_shake=False
+        )
