@@ -58,7 +58,7 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1e-2, content_weight=1.0, total_variation_weight=1e-3,
+        style_weight=1e-2, content_weight=1.0, total_variation_weight=1e-2,
         n_epoch=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
