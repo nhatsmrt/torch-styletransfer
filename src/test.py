@@ -58,7 +58,7 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1e-2, content_weight=1.0, total_variation_weight=1e-1,
+        style_weight=1e-1, content_weight=1.0, total_variation_weight=1.0,
         n_epoch=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
@@ -75,8 +75,8 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
-    content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
-    style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+    content_images = UnlabelledImageListDataset("MiniCOCO/128/", img_dim=img_dim)
+    style_images = UnlabelledImageListDataset(style_path, img_dim=img_dim)
 
     # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
