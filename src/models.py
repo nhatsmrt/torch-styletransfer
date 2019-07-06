@@ -88,7 +88,5 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample2(upsampled)
         upsampled = self.mid2(upsampled)
         upsampled = self.upsample3(upsampled)
-        upsampled = self.pad(upsampled)
-        upsampled = self.conv(upsampled)
         op = self.op(upsampled)
         return op
