@@ -299,14 +299,14 @@ class CustomResidualBlockPreActivation(ResNeXtBlock):
             branches=nn.ModuleList(
                 [
                     nn.Sequential(
-                        # nn.ReplicationPad2d(1),
+                        nn.ReplicationPad2d(1),
                         ConvolutionalLayer(
-                            in_channels, in_channels, 1, padding=0,
+                            in_channels, in_channels, 3, padding=0,
                             activation=activation, normalization=normalization
                         ),
-                        # nn.ReplicationPad2d(1),
+                        nn.ReplicationPad2d(1),
                         ConvolutionalLayer(
-                            in_channels, in_channels, 1, padding=0,
+                            in_channels, in_channels, 3, padding=0,
                             activation=activation, normalization=normalization
                         )
                     )
