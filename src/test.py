@@ -68,7 +68,21 @@ def run_test_multiple(
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
+    from torchvision.transforms import Compose, Resize, RandomCrop
     from torch.optim import Adam
+
+    # mean = [0.485, 0.456, 0.406]
+    # std = [0.229, 0.224, 0.225]
+    #
+    # print("Begin creating dataset")
+    # content_images = UnlabelledImageDataset("MiniCOCO/256/")
+    # style_images = UnlabelledImageListDataset(style_path, transform=Compose(
+    #     [
+    #         Resize(512),
+    #         RandomCrop((256, 256))
+    #     ]
+    # ))
+    #
 
     img_dim = (128, 128)
     mean = [0.485, 0.456, 0.406]
@@ -77,6 +91,7 @@ def run_test_multiple(
     print("Begin creating dataset")
     content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
     style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+
 
     # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
@@ -122,7 +137,7 @@ def run_test_multiple(
     learner = MultipleStylesTransferLearner(
         dataloader, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
-        style_layers={1, 6, 11, 20, 42}, total_variation_weight=total_variation_weight,
+        style_layers={1, 6, 11, 20}, total_variation_weight=total_variation_weight,
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
