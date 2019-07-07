@@ -64,7 +64,7 @@ def run_test_multiple(
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
-    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint, ToDeviceCallback
+    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint, ToDeviceCallback, MixedPrecision
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
@@ -124,8 +124,17 @@ def run_test_multiple(
     # decoder = GenericDecoder()
     decoder = PixelShuffleDecoder()
     print("Finish creating decoder")
+    # model = MultipleStyleTransferNetwork(
+    #     encoder=feature_extractor,
+    #     decoder=decoder,
+    #     extracted_feature=20
+    # )
     model = MultipleStyleTransferNetwork(
-        encoder=feature_extractor,
+        encoder=FeatureExtractor(
+            model=vgg19(True), fine_tune=False,
+            mean=mean, std=std,
+            device=get_device()
+        ),
         decoder=decoder,
         extracted_feature=20
     )
@@ -137,11 +146,12 @@ def run_test_multiple(
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
     callbacks = [
+        ToDeviceCallback(),
+        MixedPrecision(),
         Tensorboard(every_iter=1000, every_epoch=1),
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
-        ToDeviceCallback()
     ]
     learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
