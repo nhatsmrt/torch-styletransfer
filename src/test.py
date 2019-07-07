@@ -76,7 +76,7 @@ def run_test_multiple(
 
     print("Begin creating dataset")
 
-    content_images = UnlabelledImageDataset("MiniCOCO/256/")
+    content_images = UnlabelledImageListDataset("MiniCOCO/256/")
     style_images = UnlabelledImageListDataset(style_path, transform=Compose(
         [
             Resize(512),
