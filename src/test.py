@@ -64,7 +64,8 @@ def run_test_multiple(
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
-    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger, ModelCheckpoint, ToDeviceCallback, MixedPrecision
+    from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
+        ModelCheckpoint, ToDeviceCallback, MixedPrecision, MixedPrecisionV2
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
@@ -147,7 +148,7 @@ def run_test_multiple(
     )
     callbacks = [
         ToDeviceCallback(),
-        MixedPrecision(),
+        MixedPrecisionV2(),
         Tensorboard(every_iter=1000, every_epoch=1),
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
