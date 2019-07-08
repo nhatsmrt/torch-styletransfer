@@ -59,7 +59,7 @@ def run_test(
 
 def run_test_multiple(
         style_weight=1.0, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=80000, print_every=1000, style_path="./data/train_9/"
+        n_iter=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
@@ -154,6 +154,6 @@ def run_test_multiple(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
-        ProgressBarCB()
+        ProgressBarCB(range(print_every))
     ]
-    learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
+    learner.learn(n_iter=n_iter, callbacks=callbacks, eval_every=print_every)
