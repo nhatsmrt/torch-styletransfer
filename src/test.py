@@ -58,14 +58,14 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1.0, content_weight=1.0, total_variation_weight=1e-4,
+        style_weight=1.0, content_weight=1.0, total_variation_weight=0.1,
         n_epoch=80000, print_every=1000, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
-        ModelCheckpoint, ToDeviceCallback, MixedPrecision, MixedPrecisionV2
+        ModelCheckpoint, ToDeviceCallback, MixedPrecision, MixedPrecisionV2, ProgressBarCB
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
@@ -154,5 +154,6 @@ def run_test_multiple(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
+        ProgressBarCB()
     ]
     learner.learn(n_epoch=n_epoch, callbacks=callbacks, eval_every=print_every)
