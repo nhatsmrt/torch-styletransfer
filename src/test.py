@@ -155,7 +155,7 @@ def run_test_multiple(
     )
     callbacks = [
         ToDeviceCallback(),
-        MixedPrecisionV2(),
+        # MixedPrecisionV2(),
         Tensorboard(every_iter=1000, every_epoch=1),
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
