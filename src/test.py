@@ -115,7 +115,7 @@ def run_test_multiple(
     dataloader_val = DataLoader(val_dataset, sampler=val_sampler, batch_size=8)
     # print(len(dataloader))
 
-    every_iter = eval_every = print_every = compute_num_batch(len(train_dataset), batch_size)
+    every_iter = eval_every = print_every = compute_num_batch(len(train_style), batch_size)
     n_iter = every_iter * n_epoch
 
     print("Creating models")
