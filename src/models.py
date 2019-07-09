@@ -98,7 +98,7 @@ class MultipleStyleUNet(nn.Module):
         super(MultipleStyleUNet, self).__init__()
         self.adain = AdaIN()
         self.encoder = encoder
-        self.unet = DynamicUnetV2(encoder, n_classes=3, y_range=(0, 1))
+        self.unet = DynamicUnetV2(encoder, n_classes=3, y_range=(0, 1), normalization=nn.Identity)
         self.encoder.default_extracted_feature = extracted_feature
 
     def forward(self, input: Tensor) -> Tensor:
