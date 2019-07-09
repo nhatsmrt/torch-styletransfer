@@ -161,6 +161,6 @@ def run_test_multiple(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
-        ProgressBarCB(range(print_every))
+        # ProgressBarCB(range(print_every))
     ]
     learner.learn(n_iter=n_iter, callbacks=callbacks, eval_every=print_every)
