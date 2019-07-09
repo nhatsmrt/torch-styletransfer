@@ -8,8 +8,7 @@ It seems to work pretty well on resized COCO data (even on untrained/unseen phot
 ## Some results
 I train the thing for 850 iterations, using COCO dataset (resize to 256 for each size), and the train_9 subset of the wikiart dataset. For each dataset, I split 80% of them as training data and use the rest for evaluating. I train the network for a total of 850 iterations (1 "epoch"). This is the result:
 ### Kinda Successful:
-<img src="demo/PixelShuffle/content_3.png" alt="content" width="250" />
-<img src="demo/PixelShuffle/style_3.png" alt="style" width="250" />
+<img src="demo/PixelShuffle/content_3.png" alt="content" width="250" /> <img src="demo/PixelShuffle/style_3.png" alt="style" width="250" />
 <img src="demo/PixelShuffle/styled_3.png" alt="styled" width="250" />
 <br />
 <img src="demo/PixelShuffle/content_1.png" alt="content" width="250" />
