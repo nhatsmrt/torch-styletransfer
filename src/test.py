@@ -65,8 +65,8 @@ def run_test_multiple(
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
-        ModelCheckpoint, ToDeviceCallback, MixedPrecision, MixedPrecisionV2, ProgressBarCB
-    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder
+        ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2
+    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
     from torchvision.transforms import Compose, Resize, RandomCrop
@@ -86,10 +86,10 @@ def run_test_multiple(
     ))
 
     # img_dim = (128, 128)
-    # content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
-    # style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
-
-
+    # # content_images = UnlabelledImageDataset("MiniCOCO/128/", img_dim=img_dim)
+    # # style_images = UnlabelledImageDataset(style_path, img_dim=img_dim)
+    #
+    #
     # content_images = UnlabelledImageListDataset("data/", img_dim=img_dim)
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
@@ -123,20 +123,27 @@ def run_test_multiple(
     )
     print("Finish creating feature extractor")
     # decoder = GenericDecoder()
-    decoder = PixelShuffleDecoder()
+    # decoder = PixelShuffleDecoder()
     print("Finish creating decoder")
     # model = MultipleStyleTransferNetwork(
     #     encoder=feature_extractor,
     #     decoder=decoder,
     #     extracted_feature=20
     # )
-    model = MultipleStyleTransferNetwork(
-        encoder=FeatureExtractor(
+    # model = MultipleStyleTransferNetwork(
+    #     encoder=FeatureExtractor(
+    #         model=vgg19(True), fine_tune=False,
+    #         mean=mean, std=std,
+    #         device=get_device()
+    #     ),
+    #     decoder=decoder,
+    #     extracted_feature=20
+    # )
+    model = MultipleStyleUNet(
+        encoder=FeatureExtractorSequential(
             model=vgg19(True), fine_tune=False,
-            mean=mean, std=std,
-            device=get_device()
+            mean=mean, std=std, last_layer=20
         ),
-        decoder=decoder,
         extracted_feature=20
     )
     optimizer = Adam(model.parameters())

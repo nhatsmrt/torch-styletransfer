@@ -4,7 +4,7 @@ from nntoolbox.vision import ResNeXtBlock, ConvolutionalLayer
 __all__ = ['AdaptiveConcatPool2d',
            'Flatten', 'Lambda', 'PoolFlatten', 'View', 'ResizeBatch', 'bn_drop_lin', 'conv2d', 'conv2d_trans',
            'custom_conv_layer', 'NormType', 'relu', 'batchnorm_2d', 'CustomPixelShuffle_ICNR', 'icnr',
-           'SelfAttention', 'SequentialEx', 'MergeLayer', 'custom_res_block', 'sigmoid_range',
+           'SelfAttention', 'SequentialEx', 'MergeLayer', 'CustomMergeLayer', 'custom_res_block', 'sigmoid_range',
            'SigmoidRange', 'PartialLayer', 'CustomResidualBlockPreActivation']
 
 
@@ -198,6 +198,22 @@ class MergeLayer(nn.Module):
         self.dense = dense
 
     def forward(self, x): return torch.cat([x, x.orig], dim=1) if self.dense else (x + x.orig)
+
+from nntoolbox.hooks import InputHook
+class CustomMergeLayer(nn.Module):
+    "Merge a shortcut with the result of the module by adding them or concatenating thme if `dense=True`."
+
+    def __init__(self, input_hook: InputHook, dense: bool=False, remove_store: bool=True):
+        super().__init__()
+        self.dense = dense
+        self.input_hook = input_hook
+        self.remove_store = remove_store
+
+    def forward(self, x):
+        op = torch.cat([x, self.input_hook.store], dim=1) if self.dense else (x + self.input_hook.store)
+        if self.remove_store:
+            self.input_hook.store = None
+        return op
 
 
 def custom_res_block(nf, dense: bool = False, norm_type: Optional[nn.Module] = nn.BatchNorm2d, bottle: bool = False,

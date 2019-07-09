@@ -91,3 +91,31 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample3(upsampled)
         op = self.op(upsampled)
         return op
+
+
+class MultipleStyleUNet(nn.Module):
+    def __init__(self, encoder: FeatureExtractorSequential, extracted_feature: int):
+        super(MultipleStyleUNet, self).__init__()
+        self.adain = AdaIN()
+        self.encoder = encoder
+        self.unet = DynamicUnetV2(encoder, n_classes=3, y_range=(0, 1))
+        self.encoder.default_extracted_feature = extracted_feature
+
+    def forward(self, input: Tensor) -> Tensor:
+        return self.decode(self.style_encode(input))
+
+    def style_encode(self, input: Tensor) -> Tensor:
+        return self.adain(self.encode(input)) # t = AdaIn(f(c), f(s))
+
+    def encode(self, input: Tensor) -> Tensor:
+        return self.encoder(input)
+
+    def decode(self, input: Tensor) -> Tensor:
+        return self.unet.get_decoder()(input)
+
+    def set_style(self, style_img: Tensor):
+        '''
+        :param style_img:
+        :return:
+        '''
+        self.adain.set_style(self.encode(style_img))

@@ -1,7 +1,8 @@
 from fastai.torch_core import *
-# from fastai.layers import *
+from fastai.layers import *
+from fastai.vision.models.unet import *
 from fastai.callbacks.hooks import *
-from .layers import *
+from .layers import custom_conv_layer, custom_res_block, CustomPixelShuffle_ICNR, CustomMergeLayer
 
 __all__ = ['CustomDynamicUnet', 'CustomUnetBlock']
 
@@ -67,13 +68,14 @@ class CustomDynamicUnet(SequentialEx):
 
         ni = x.shape[1]
         if imsize != sfs_szs[0][-2:]: layers.append(CustomPixelShuffle_ICNR(ni, norm_type=normalization, **kwargs))
-        if last_cross:
-            layers.append(MergeLayer(dense=True))
-            ni += in_channels(encoder)
-            layers.append(custom_res_block(ni, bottle=bottle, norm_type=normalization, **kwargs))
+        # if last_cross:
+        #     layers.append(MergeLayer(dense=True))
+        #     ni += in_channels(encoder)
+        #     layers.append(custom_res_block(ni, bottle=bottle, norm_type=normalization, **kwargs))
         layers += [custom_conv_layer(ni, n_classes, ks=1, use_activ=False, norm_type=normalization, **kwargs)]
         if y_range is not None: layers.append(SigmoidRange(*y_range))
         super().__init__(*layers)
 
     def __del__(self):
         if hasattr(self, "sfs"): self.sfs.remove()
+
