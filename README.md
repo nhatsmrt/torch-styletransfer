@@ -13,3 +13,13 @@ I train the thing for 850 iterations, using COCO dataset (resize to 256 for each
 <img src="demo/PixelShuffle/content_1.png" alt="content" width="175" /> <img src="demo/PixelShuffle/style_1.png" alt="style" width="175" /> <img src="demo/PixelShuffle/styled_1.png" alt="styled" width="175" />
 ### Less So:
 <img src="demo/PixelShuffle/less_successful.png" alt="styled" width="750" />
+<br />
+(Content image source: https://www.pexels.com/photo/cat-whiskers-kitty-tabby-20787/)
+## Resources
+
+1. <em>Xun Huang, Serge Belongie.</em> Arbitrary Style Transfer in Real-time with Adaptive Instance Normalization: https://arxiv.org/abs/1703.06868
+2. Art images are from WikiArt.org. All images are protected by copyright and utilize the images only for the purposes of data mining, which constitutes a form of fair use.
+Data can be download from: https://www.kaggle.com/c/painter-by-numbers/data
+3. COCO dataset: http://cocodataset.org/#download
+Licensed under a Creative Commons Attribution 4.0 License.
+4. All test images are either from the COCO dataset, except for the cat photo.
