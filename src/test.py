@@ -58,8 +58,8 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=20.0, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=8, batch_size=8, style_path="./data/train_9/"
+        style_weight=1.0, content_weight=1.0, total_variation_weight=0.1,
+        n_epoch=5, batch_size=8, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
@@ -125,30 +125,25 @@ def run_test_multiple(
         device=get_device()
     )
     print("Finish creating feature extractor")
-    # decoder = GenericDecoder()
-    # decoder = PixelShuffleDecoder()
+
+    decoder = PixelShuffleDecoder()
     print("Finish creating decoder")
-    # model = MultipleStyleTransferNetwork(
-    #     encoder=feature_extractor,
-    #     decoder=decoder,
-    #     extracted_feature=20
-    # )
-    # model = MultipleStyleTransferNetwork(
-    #     encoder=FeatureExtractor(
-    #         model=vgg19(True), fine_tune=False,
-    #         mean=mean, std=std,
-    #         device=get_device()
-    #     ),
-    #     decoder=decoder,
-    #     extracted_feature=20
-    # )
-    model = MultipleStyleUNet(
-        encoder=FeatureExtractorSequential(
+    model = MultipleStyleTransferNetwork(
+        encoder=FeatureExtractor(
             model=vgg19(True), fine_tune=False,
-            mean=mean, std=std, last_layer=20
+            mean=mean, std=std,
+            device=get_device(), last_layer=20
         ),
+        decoder=decoder,
         extracted_feature=20
     )
+    # model = MultipleStyleUNet(
+    #     encoder=FeatureExtractorSequential(
+    #         model=vgg19(True), fine_tune=False,
+    #         mean=mean, std=std, last_layer=20
+    #     ),
+    #     extracted_feature=20
+    # )
     optimizer = Adam(model.parameters())
     learner = MultipleStylesTransferLearner(
         dataloader, dataloader_val,
