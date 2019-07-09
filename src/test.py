@@ -58,8 +58,8 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=50.0, content_weight=1.0, total_variation_weight=0.1,
-        n_iter=80000, print_every=1000, style_path="./data/train_9/"
+        style_weight=20.0, content_weight=1.0, total_variation_weight=0.1,
+        n_epoch=8, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
@@ -115,6 +115,9 @@ def run_test_multiple(
     dataloader_val = DataLoader(val_dataset, sampler=val_sampler, batch_size=8)
     # print(len(dataloader))
 
+    every_iter = eval_every = print_every = len(train_dataset)
+    n_iter = len(train_dataset) * n_epoch
+
     print("Creating models")
     feature_extractor = FeatureExtractor(
         model=vgg19(True), fine_tune=False,
@@ -156,11 +159,11 @@ def run_test_multiple(
     callbacks = [
         ToDeviceCallback(),
         # MixedPrecisionV2(),
-        Tensorboard(every_iter=1000, every_epoch=1),
+        Tensorboard(every_iter=every_iter, every_epoch=1),
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         # ProgressBarCB(range(print_every))
     ]
-    learner.learn(n_iter=n_iter, callbacks=callbacks, eval_every=print_every)
+    learner.learn(n_iter=n_iter, callbacks=callbacks, eval_every=eval_every)
