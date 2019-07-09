@@ -15,6 +15,7 @@ I train the thing for 850 iterations, using COCO dataset (resize to 256 for each
 <img src="demo/PixelShuffle/less_successful.png" alt="styled" width="750" />
 <br />
 (Content image source: https://www.pexels.com/photo/cat-whiskers-kitty-tabby-20787/)
+
 ## Resources
 
 1. <em>Xun Huang, Serge Belongie.</em> Arbitrary Style Transfer in Real-time with Adaptive Instance Normalization: https://arxiv.org/abs/1703.06868
