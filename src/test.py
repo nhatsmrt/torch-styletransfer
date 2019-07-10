@@ -58,15 +58,16 @@ def run_test(
 
 
 def run_test_multiple(
-        style_weight=1.0, content_weight=1.0, total_variation_weight=0.1,
-        n_epoch=5, batch_size=8, style_path="./data/train_9/"
+        style_weight=10.0, content_weight=1.0, total_variation_weight=0.1,
+        n_epoch=100, batch_size=8, style_path="./data/train_9/"
 ):
     from nntoolbox.vision.learner import MultipleStylesTransferLearner
     from nntoolbox.vision.utils import UnlabelledImageDataset, PairedDataset, UnlabelledImageListDataset
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
-        ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2
-    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet
+        ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2, LRSchedulerCB
+    from torch.optim.lr_scheduler import LambdaLR
+    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet, SimpleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
     from torchvision.transforms import Compose, Resize, RandomCrop
@@ -77,7 +78,12 @@ def run_test_multiple(
 
     print("Begin creating dataset")
 
-    content_images = UnlabelledImageListDataset("MiniCOCO/256/")
+    content_images = UnlabelledImageListDataset("data/train2014/", transform=Compose(
+        [
+            Resize(512),
+            RandomCrop((256, 256))
+        ]
+    ))
     style_images = UnlabelledImageListDataset(style_path, transform=Compose(
         [
             Resize(512),
@@ -126,7 +132,8 @@ def run_test_multiple(
     )
     print("Finish creating feature extractor")
 
-    decoder = PixelShuffleDecoder()
+    # decoder = PixelShuffleDecoder()
+    decoder = SimpleDecoder()
     print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
         encoder=FeatureExtractor(
@@ -144,7 +151,14 @@ def run_test_multiple(
     #     ),
     #     extracted_feature=20
     # )
-    optimizer = Adam(model.parameters())
+    optimizer = Adam(model.parameters(), lr=1e-4)
+    lr_scheduler = LRSchedulerCB(
+        scheduler=LambdaLR(
+            optimizer,
+            lr_lambda=lambda iter: 1e-4 / (1.0 + 5e-5 * iter)
+        ),
+        timescale='iter'
+    )
     learner = MultipleStylesTransferLearner(
         dataloader, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
@@ -158,6 +172,7 @@ def run_test_multiple(
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
+        lr_scheduler,
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         # ProgressBarCB(range(print_every))
     ]

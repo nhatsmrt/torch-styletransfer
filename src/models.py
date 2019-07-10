@@ -2,7 +2,7 @@ from nntoolbox.vision import *
 from .layers import *
 
 
-__all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder']
+__all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder', 'PixelShuffleDecoder' 'SimpleDecoder']
 
 
 class MultipleStyleTransferNetwork(nn.Module):
@@ -91,6 +91,48 @@ class PixelShuffleDecoder(nn.Module):
         upsampled = self.upsample3(upsampled)
         op = self.op(upsampled)
         return op
+
+
+class PixelShuffleDecoderV2(nn.Sequential):
+    def __init__(self):
+        super(PixelShuffleDecoderV2, self).__init__(
+            PixelShuffleConvolutionLayer(
+                in_channels=512, out_channels=256,
+                normalization=nn.Identity, upscale_factor=2
+            ),
+            CustomResidualBlockPreActivation(in_channels=128, normalization=nn.Identity),
+            PixelShuffleConvolutionLayer(
+                in_channels=128, out_channels=32,
+                normalization=nn.Identity, upscale_factor=2
+            ),
+            CustomResidualBlockPreActivation(in_channels=32, normalization=nn.Identity),
+            PixelShuffleConvolutionLayer(
+                in_channels=32, out_channels=3, activation=nn.Identity,
+                normalization=nn.Sigmoid, upscale_factor=2
+            )
+        )
+
+
+class SimpleDecoder(nn.Sequential):
+    def __init__(self):
+        super(SimpleDecoder, self).__init__(
+            ReflectionPaddedConv(512, 256),
+            nn.Upsample(scale_factor=2),
+
+            ReflectionPaddedConv(256, 256),
+            ReflectionPaddedConv(256, 256),
+            ReflectionPaddedConv(256, 256),
+
+            ReflectionPaddedConv(256, 128),
+            nn.Upsample(scale_factor=2),
+            ReflectionPaddedConv(128, 128),
+
+            ReflectionPaddedConv(128, 64),
+            nn.Upsample(scale_factor=2),
+            ReflectionPaddedConv(64, 64),
+
+            ReflectionPaddedConv(64, 3, activation=nn.Sigmoid)
+        )
 
 
 class MultipleStyleUNet(nn.Module):

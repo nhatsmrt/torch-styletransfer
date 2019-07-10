@@ -5,7 +5,7 @@ __all__ = ['AdaptiveConcatPool2d',
            'Flatten', 'Lambda', 'PoolFlatten', 'View', 'ResizeBatch', 'bn_drop_lin', 'conv2d', 'conv2d_trans',
            'custom_conv_layer', 'NormType', 'relu', 'batchnorm_2d', 'CustomPixelShuffle_ICNR', 'icnr',
            'SelfAttention', 'SequentialEx', 'MergeLayer', 'CustomMergeLayer', 'custom_res_block', 'sigmoid_range',
-           'SigmoidRange', 'PartialLayer', 'CustomResidualBlockPreActivation']
+           'SigmoidRange', 'PartialLayer', 'CustomResidualBlockPreActivation', 'ReflectionPaddedConv']
 
 
 class Lambda(nn.Module):
@@ -329,4 +329,13 @@ class CustomResidualBlockPreActivation(ResNeXtBlock):
                 ]
             ),
             use_shake_shake=False
+        )
+
+
+class ReflectionPaddedConv(nn.Sequential):
+    def __init__(self, in_channels: int, out_channels: int, activation=nn.ReLU):
+        super(ReflectionPaddedConv, self).__init__(
+            nn.ReflectionPad2d(1),
+            nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3),
+            activation()
         )
