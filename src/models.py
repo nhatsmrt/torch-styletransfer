@@ -2,7 +2,7 @@ from nntoolbox.vision import *
 from .layers import *
 
 
-__all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder', 'PixelShuffleDecoder' 'SimpleDecoder']
+__all__ = ['MultipleStyleTransferNetwork', 'GenericDecoder', 'PixelShuffleDecoder', 'SimpleDecoder']
 
 
 class MultipleStyleTransferNetwork(nn.Module):
