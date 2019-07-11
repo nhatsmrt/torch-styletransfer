@@ -66,7 +66,7 @@ def run_test_multiple(
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
         ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2, LRSchedulerCB
-    from nntoolbox.optim.lr_scheduler import FunctionalLR
+    # from nntoolbox.optim.lr_scheduler import FunctionalLR
     from torch.optim.lr_scheduler import LambdaLR
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet, SimpleDecoder
     from torchvision.models import vgg19
@@ -122,9 +122,6 @@ def run_test_multiple(
     dataloader_val = DataLoader(val_dataset, sampler=val_sampler, batch_size=8)
     # print(len(dataloader))
 
-    every_iter = eval_every = print_every = compute_num_batch(len(train_style), batch_size)
-    n_iter = every_iter * n_epoch
-
     print("Creating models")
     feature_extractor = FeatureExtractor(
         model=vgg19(True), fine_tune=False,
@@ -166,6 +163,11 @@ def run_test_multiple(
         style_layers={1, 6, 11, 20}, total_variation_weight=total_variation_weight,
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
+
+    # every_iter = eval_every = print_every = compute_num_batch(len(train_style), batch_size)
+    every_iter = eval_every = print_every = compute_num_batch(len(val_style), batch_size)
+    n_iter = every_iter * n_epoch
+
     callbacks = [
         ToDeviceCallback(),
         # MixedPrecisionV2(),
