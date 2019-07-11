@@ -68,7 +68,8 @@ def run_test_multiple(
         ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2, LRSchedulerCB
     # from nntoolbox.optim.lr_scheduler import FunctionalLR
     from torch.optim.lr_scheduler import LambdaLR
-    from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet, SimpleDecoder
+    from src.models import GenericDecoder, MultipleStyleTransferNetwork, \
+        PixelShuffleDecoder, PixelShuffleDecoderV2, MultipleStyleUNet, SimpleDecoder
     from torchvision.models import vgg19
     from torch.utils.data import DataLoader
     from torchvision.transforms import Compose, Resize, RandomCrop
@@ -130,7 +131,7 @@ def run_test_multiple(
     )
     print("Finish creating feature extractor")
 
-    # decoder = PixelShuffleDecoder()
+    # decoder = PixelShuffleDecoderV2()
     decoder = SimpleDecoder()
     print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
@@ -149,14 +150,15 @@ def run_test_multiple(
     #     ),
     #     extracted_feature=20
     # )
-    optimizer = Adam(model.parameters(), lr=1e-4)
-    lr_scheduler = LRSchedulerCB(
-        scheduler=LambdaLR(
-            optimizer,
-            lr_lambda=lambda iter: 1 / (1.0 + 5e-5 * iter)
-        ),
-        timescale='iter'
-    )
+    optimizer = Adam(model.parameters())
+    # optimizer = Adam(model.parameters(), lr=1e-4)
+    # lr_scheduler = LRSchedulerCB(
+    #     scheduler=LambdaLR(
+    #         optimizer,
+    #         lr_lambda=lambda iter: 1 / (1.0 + 5e-5 * iter)
+    #     ),
+    #     timescale='iter'
+    # )
     learner = MultipleStylesTransferLearner(
         dataloader_val, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
@@ -175,7 +177,7 @@ def run_test_multiple(
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
-        lr_scheduler,
+        # lr_scheduler,
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         # ProgressBarCB(range(print_every))
     ]
