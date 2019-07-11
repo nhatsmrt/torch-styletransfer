@@ -153,7 +153,7 @@ def run_test_multiple(
     lr_scheduler = LRSchedulerCB(
         scheduler=LambdaLR(
             optimizer,
-            lambda_lr=lambda iter: 1 / (1.0 + 5e-5 * iter)
+            lr_lambda=lambda iter: 1 / (1.0 + 5e-5 * iter)
         ),
         timescale='iter'
     )
