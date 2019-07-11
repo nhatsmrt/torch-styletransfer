@@ -81,13 +81,13 @@ def run_test_multiple(
 
     content_images = UnlabelledImageListDataset("data/train2014/", transform=Compose(
         [
-            Resize(256),
+            Resize((256, 256)),
             # RandomCrop((256, 256))
         ]
     ))
     style_images = UnlabelledImageListDataset(style_path, transform=Compose(
         [
-            Resize(256),
+            Resize((256, 257)),
             # RandomCrop((256, 256))
         ]
     ))
