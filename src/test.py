@@ -82,14 +82,14 @@ def run_test_multiple(
 
     content_images = UnlabelledImageListDataset("data/train2014/", transform=Compose(
         [
-            Resize((256, 256)),
-            # RandomCrop((256, 256))
+            Resize(512),
+            RandomCrop((256, 256))
         ]
     ))
     style_images = UnlabelledImageListDataset(style_path, transform=Compose(
         [
-            Resize((256, 256)),
-            # RandomCrop((256, 256))
+            Resize(512),
+            RandomCrop((256, 256))
         ]
     ))
 
@@ -102,11 +102,11 @@ def run_test_multiple(
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
     print("Begin splitting data")
-    train_size = int(0.995 * len(content_images))
+    train_size = int(0.80 * len(content_images))
     val_size = len(content_images) - train_size
     train_content, val_content = torch.utils.data.random_split(content_images, [train_size, val_size])
 
-    train_size = int(0.995 * len(style_images))
+    train_size = int(0.80 * len(style_images))
     val_size = len(style_images) - train_size
     train_style, val_style = torch.utils.data.random_split(style_images, [train_size, val_size])
 
@@ -160,14 +160,14 @@ def run_test_multiple(
         timescale='iter'
     )
     learner = MultipleStylesTransferLearner(
-        dataloader_val, dataloader_val,
+        dataloader, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
         style_layers={1, 6, 11, 20}, total_variation_weight=total_variation_weight,
         style_weight=style_weight, content_weight=content_weight, device=get_device()
     )
 
-    # every_iter = eval_every = print_every = compute_num_batch(len(train_style), batch_size)
-    every_iter = eval_every = print_every = compute_num_batch(len(val_style), batch_size)
+    every_iter = eval_every = print_every = compute_num_batch(len(train_style), batch_size)
+    # every_iter = eval_every = print_every = compute_num_batch(len(val_style), batch_size)
     n_iter = every_iter * n_epoch
 
     callbacks = [
