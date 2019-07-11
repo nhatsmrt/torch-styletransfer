@@ -131,8 +131,8 @@ def run_test_multiple(
     )
     print("Finish creating feature extractor")
 
-    # decoder = PixelShuffleDecoderV2()
-    decoder = SimpleDecoder()
+    decoder = PixelShuffleDecoderV2()
+    # decoder = SimpleDecoder()
     print("Finish creating decoder")
     model = MultipleStyleTransferNetwork(
         encoder=FeatureExtractor(
@@ -150,15 +150,15 @@ def run_test_multiple(
     #     ),
     #     extracted_feature=20
     # )
-    optimizer = Adam(model.parameters())
-    # optimizer = Adam(model.parameters(), lr=1e-4)
-    # lr_scheduler = LRSchedulerCB(
-    #     scheduler=LambdaLR(
-    #         optimizer,
-    #         lr_lambda=lambda iter: 1 / (1.0 + 5e-5 * iter)
-    #     ),
-    #     timescale='iter'
-    # )
+    # optimizer = Adam(model.parameters())
+    optimizer = Adam(model.parameters(), lr=1e-4)
+    lr_scheduler = LRSchedulerCB(
+        scheduler=LambdaLR(
+            optimizer,
+            lr_lambda=lambda iter: 1 / (1.0 + 5e-5 * iter)
+        ),
+        timescale='iter'
+    )
     learner = MultipleStylesTransferLearner(
         dataloader_val, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
@@ -177,7 +177,7 @@ def run_test_multiple(
         MultipleMetricLogger(
             iter_metrics=["content_loss", "style_loss", "total_variation_loss", "loss"], print_every=print_every
         ),
-        # lr_scheduler,
+        lr_scheduler,
         ModelCheckpoint(learner=learner, save_best_only=False, filepath='weights/model.pt'),
         # ProgressBarCB(range(print_every))
     ]
