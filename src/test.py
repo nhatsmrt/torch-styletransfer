@@ -127,7 +127,7 @@ def run_test_multiple(
         model=vgg19(True), fine_tune=False,
         mean=mean, std=std,
         device=get_device(), last_layer=20
-    ),
+    )
     print("Finish creating feature extractor")
 
     # decoder = PixelShuffleDecoder()
