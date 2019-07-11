@@ -66,6 +66,7 @@ def run_test_multiple(
     from nntoolbox.utils import get_device
     from nntoolbox.callbacks import Tensorboard, MultipleMetricLogger,\
         ModelCheckpoint, ToDeviceCallback, ProgressBarCB, MixedPrecisionV2, LRSchedulerCB
+    from nntoolbox.optim.lr_scheduler import FunctionalLR
     from torch.optim.lr_scheduler import LambdaLR
     from src.models import GenericDecoder, MultipleStyleTransferNetwork, PixelShuffleDecoder, MultipleStyleUNet, SimpleDecoder
     from torchvision.models import vgg19
@@ -128,8 +129,8 @@ def run_test_multiple(
     feature_extractor = FeatureExtractor(
         model=vgg19(True), fine_tune=False,
         mean=mean, std=std,
-        device=get_device()
-    )
+        device=get_device(), last_layer=20
+    ),
     print("Finish creating feature extractor")
 
     # decoder = PixelShuffleDecoder()
@@ -155,7 +156,7 @@ def run_test_multiple(
     lr_scheduler = LRSchedulerCB(
         scheduler=LambdaLR(
             optimizer,
-            lr_lambda=lambda iter: 1e-4 / (1.0 + 5e-5 * iter)
+            lambda_lr=lambda iter: 1 / (1.0 + 5e-5 * iter)
         ),
         timescale='iter'
     )

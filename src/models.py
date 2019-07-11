@@ -97,7 +97,7 @@ class PixelShuffleDecoderV2(nn.Sequential):
     def __init__(self):
         super(PixelShuffleDecoderV2, self).__init__(
             PixelShuffleConvolutionLayer(
-                in_channels=512, out_channels=256,
+                in_channels=512, out_channels=128,
                 normalization=nn.Identity, upscale_factor=2
             ),
             CustomResidualBlockPreActivation(in_channels=128, normalization=nn.Identity),
