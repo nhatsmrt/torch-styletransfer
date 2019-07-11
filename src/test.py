@@ -87,7 +87,7 @@ def run_test_multiple(
     ))
     style_images = UnlabelledImageListDataset(style_path, transform=Compose(
         [
-            Resize((256, 257)),
+            Resize((256, 256)),
             # RandomCrop((256, 256))
         ]
     ))
