@@ -107,8 +107,8 @@ class PixelShuffleDecoderV2(nn.Sequential):
             ),
             CustomResidualBlockPreActivation(in_channels=32, normalization=nn.Identity),
             PixelShuffleConvolutionLayer(
-                in_channels=32, out_channels=3, activation=nn.Identity,
-                normalization=nn.Sigmoid, upscale_factor=2
+                in_channels=32, out_channels=3, activation=nn.Sigmoid,
+                normalization=nn.Identity, upscale_factor=2
             )
         )
 
