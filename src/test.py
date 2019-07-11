@@ -101,11 +101,11 @@ def run_test_multiple(
     # style_images = UnlabelledImageListDataset("data/train_9/", img_dim=img_dim)
 
     print("Begin splitting data")
-    train_size = int(0.8 * len(content_images))
+    train_size = int(0.995 * len(content_images))
     val_size = len(content_images) - train_size
     train_content, val_content = torch.utils.data.random_split(content_images, [train_size, val_size])
 
-    train_size = int(0.8 * len(style_images))
+    train_size = int(0.995 * len(style_images))
     val_size = len(style_images) - train_size
     train_style, val_style = torch.utils.data.random_split(style_images, [train_size, val_size])
 
@@ -161,7 +161,7 @@ def run_test_multiple(
         timescale='iter'
     )
     learner = MultipleStylesTransferLearner(
-        dataloader, dataloader_val,
+        dataloader_val, dataloader_val,
         model, feature_extractor, optimizer=optimizer,
         style_layers={1, 6, 11, 20}, total_variation_weight=total_variation_weight,
         style_weight=style_weight, content_weight=content_weight, device=get_device()
