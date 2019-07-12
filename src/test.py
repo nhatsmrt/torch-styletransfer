@@ -79,6 +79,8 @@ def run_test_multiple(
     std = [0.229, 0.224, 0.225]
 
     print("Begin creating dataset")
+    style_paths_train = ["./data/train_" + str(i) + "/" for i in range(1, 8)]
+    style_paths_val = ["./data/train_8/", "./data/train_9/"]
 
     content_images = UnlabelledImageListDataset("data/train2014/", transform=Compose(
         [
@@ -86,7 +88,13 @@ def run_test_multiple(
             RandomCrop((256, 256))
         ]
     ))
-    style_images = UnlabelledImageListDataset(style_path, transform=Compose(
+    train_style = UnlabelledImageListDataset(style_paths_train, transform=Compose(
+        [
+            Resize(512),
+            RandomCrop((256, 256))
+        ]
+    ))
+    val_style = UnlabelledImageListDataset(style_paths_val, transform=Compose(
         [
             Resize(512),
             RandomCrop((256, 256))
@@ -105,10 +113,6 @@ def run_test_multiple(
     train_size = int(0.80 * len(content_images))
     val_size = len(content_images) - train_size
     train_content, val_content = torch.utils.data.random_split(content_images, [train_size, val_size])
-
-    train_size = int(0.80 * len(style_images))
-    val_size = len(style_images) - train_size
-    train_style, val_style = torch.utils.data.random_split(style_images, [train_size, val_size])
 
     train_dataset = PairedDataset(train_content, train_style)
     val_dataset = PairedDataset(val_content, val_style)
