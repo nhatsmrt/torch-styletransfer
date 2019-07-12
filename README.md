@@ -46,6 +46,7 @@ https://www.pexels.com/photo/cat-whiskers-kitty-tabby-20787
 https://pxhere.com/en/photo/997773
 
 5. Other AdaIN implementations that are very helpful for my own attempt:
+<br />
 https://github.com/naoto0804/pytorch-AdaIN
 <br />
 https://github.com/xunhuang1995/AdaIN-style
