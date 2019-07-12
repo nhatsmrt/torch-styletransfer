@@ -41,3 +41,4 @@ https://pxhere.com/en/photo/997773
 https://github.com/naoto0804/pytorch-AdaIN
 <br />
 https://github.com/xunhuang1995/AdaIN-style
+6. The fastai library and lessons have been really useful (I adapted some of the elements of fastai library in my nn-toolbox repository and here).

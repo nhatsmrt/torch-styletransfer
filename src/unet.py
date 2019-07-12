@@ -1,6 +1,5 @@
 from fastai.torch_core import *
 from fastai.layers import *
-from fastai.vision.models.unet import *
 from fastai.callbacks.hooks import *
 from .layers import custom_conv_layer, custom_res_block, CustomPixelShuffle_ICNR, CustomMergeLayer
 
