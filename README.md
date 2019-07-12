@@ -3,8 +3,6 @@
 Implementation of a neural network that can transfer the style of an arbitrary image to another photo.
 <br />
 Much of the code (e.g the layers) is implemented in my [neural network toolbox](https://github.com/nhatsmrt/nn-toolbox/tree/experimental). The training procedure can be found [here](https://github.com/nhatsmrt/nn-toolbox/blob/experimental/nntoolbox/vision/learner/style.py). This repository contains only the testing code. To replicate my work, please also clone the experimental branch of my nntoolbox repository.
-## Issues
-It seems to work pretty well on resized COCO data (even on untrained/unseen photos), but does not generalize that well too random photos. I suspect the problems lie in resolution discrepancy. Or maybe I just haven't trained for long enough (although in my experiment the quality of the images seem to degrade as I trained more and more).
 ## Some results
 ### Small Experiment:
 I train the thing for 850 iterations, using COCO dataset (resize to 256 for each size), and the train_9 subset of the wikiart dataset. For each dataset, I split 80% of them as training data and use the rest for evaluating. I train the network for a total of 850 iterations (1 "epoch"). Some look pretty good:
@@ -16,6 +14,8 @@ I train the thing for 850 iterations, using COCO dataset (resize to 256 for each
 Other less so:
 
 <img src="demo/PixelShuffle/less_successful.png" alt="styled" width="750" />
+
+It seems to work pretty well on resized COCO data (even on untrained/unseen photos), but does not generalize that well too random photos. I suspect the problems lie in resolution discrepancy. Or maybe I just haven't trained for long enough (although in my experiment the quality of the images seem to degrade as I trained more and more).
 
 ### Bigger Experiment:
 
@@ -42,13 +42,13 @@ Data can be download from: https://www.kaggle.com/c/painter-by-numbers/data
 Licensed under a Creative Commons Attribution 4.0 License.
 
 4. All test images are either from the COCO dataset, except for the cat photos, which are from:
-<br />
+
 https://www.pexels.com/photo/cat-whiskers-kitty-tabby-20787
 <br />
 https://pxhere.com/en/photo/997773
 
 5. Other AdaIN implementations that are very helpful for my own attempt:
-<br />
+
 https://github.com/naoto0804/pytorch-AdaIN
 <br />
 https://github.com/xunhuang1995/AdaIN-style
