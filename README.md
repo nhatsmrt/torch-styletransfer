@@ -32,17 +32,22 @@ Code for reproducing my bigger experiment can be found in src/test. Note that th
 Pretrained model (of bigger experiment) can be downloaded [here](https://drive.google.com/open?id=1-EgdKMRq8zk2TqzycNYmI8NInuNKHAXg).
 ## Resources
 1. <em>Xun Huang, Serge Belongie.</em> Arbitrary Style Transfer in Real-time with Adaptive Instance Normalization: https://arxiv.org/abs/1703.06868
+
 2. Art images are from WikiArt.org. All images are protected by copyright and utilize the images only for the purposes of data mining, which constitutes a form of fair use.
 Data can be download from: https://www.kaggle.com/c/painter-by-numbers/data
+
 3. COCO dataset: http://cocodataset.org/#download
 Licensed under a Creative Commons Attribution 4.0 License.
+
 4. All test images are either from the COCO dataset, except for the cat photos, which are from:
 <br />
 https://www.pexels.com/photo/cat-whiskers-kitty-tabby-20787
 <br />
 https://pxhere.com/en/photo/997773
+
 5. Other AdaIN implementations that are very helpful for my own attempt:
 https://github.com/naoto0804/pytorch-AdaIN
 <br />
 https://github.com/xunhuang1995/AdaIN-style
+
 6. The fastai library and lessons have been really useful (I adapted some of the elements of fastai library in my nn-toolbox repository and here).
