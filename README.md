@@ -14,6 +14,7 @@ I train the thing for 850 iterations, using COCO dataset (resize to 256 for each
 ### Less So:
 <img src="demo/PixelShuffle/less_successful.png" alt="styled" width="750" />
 ### Bigger Experiment:
+
 I decided to download the entire wikiart dataset, and use the same preprocessing for both image in the pair (i.e resize to 512 for the smaller side then random crop a square patch of size 256). I also increased the style weight to 10.0, reduced the learning rate to 1e-4 and used a multiplicative learning rate. Here are some results after training for 15598 iterations:
 <img src="demo/version_2/1.png" alt="styled" width="750" />
 <img src="demo/version_2/2.png" alt="styled" width="750" />
